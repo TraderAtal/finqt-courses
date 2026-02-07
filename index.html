@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinQT — Algorithmic Trading Courses</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #0a0a0a;
+            --bg-card: #111111;
+            --text: #e0e0e0;
+            --text-dim: #888888;
+            --green: #00c853;
+            --green-dim: #1b5e20;
+            --border: #1e1e1e;
+        }
+        html { font-size: 16px; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 20px 60px;
+        }
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--green);
+            margin-bottom: 4px;
+        }
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 1rem;
+            margin-bottom: 32px;
+        }
+        .stats {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-num {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--green);
+        }
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .courses {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .course-card {
+            display: block;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+        .course-card:hover {
+            border-color: var(--green);
+            background: rgba(0, 200, 83, 0.03);
+            transform: translateY(-1px);
+        }
+        .course-card:active {
+            transform: translateY(0);
+        }
+        .course-num {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .course-name {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .course-meta {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+        .course-meta span {
+            margin-right: 16px;
+        }
+        .footer {
+            margin-top: 48px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">FinQT</div>
+        <div class="subtitle">Algorithmic Trading Courses</div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-num">6</div>
+                <div class="stat-label">Courses</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">92</div>
+                <div class="stat-label">Modules</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">~230</div>
+                <div class="stat-label">Hours</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">595+</div>
+                <div class="stat-label">Exercises</div>
+            </div>
+        </div>
+
+        <div class="courses">
+            <a class="course-card" href="course0_python_finance.html">
+                <div class="course-num">Course 0</div>
+                <div class="course-name">Python for Finance</div>
+                <div class="course-meta">
+                    <span>16 modules</span>
+                    <span>~40 hours</span>
+                    <span>Beginner</span>
+                </div>
+            </a>
+
+            <a class="course-card" href="course1_crypto_trading.html">
+                <div class="course-num">Course 1</div>
+                <div class="course-name">Crypto Algo Trading</div>
+                <div class="course-meta">
+                    <span>15 modules</span>
+                    <span>~37 hours</span>
+                    <span>Intermediate</span>
+                </div>
+            </a>
+
+            <a class="course-card" href="course2_stock_trading.html">
+                <div class="course-num">Course 2</div>
+                <div class="course-name">Stock Algo Trading</div>
+                <div class="course-meta">
+                    <span>16 modules</span>
+                    <span>~40 hours</span>
+                    <span>Intermediate</span>
+                </div>
+            </a>
+
+            <a class="course-card" href="course3_quant_finance.html">
+                <div class="course-num">Course 3</div>
+                <div class="course-name">Quantitative Finance</div>
+                <div class="course-meta">
+                    <span>18 modules</span>
+                    <span>~45 hours</span>
+                    <span>Intermediate → Advanced</span>
+                </div>
+            </a>
+
+            <a class="course-card" href="course4_ml_finance.html">
+                <div class="course-num">Course 4</div>
+                <div class="course-name">ML for Finance</div>
+                <div class="course-meta">
+                    <span>14 modules</span>
+                    <span>~35 hours</span>
+                    <span>Intermediate → Advanced</span>
+                </div>
+            </a>
+
+            <a class="course-card" href="course5_forex_futures.html">
+                <div class="course-num">Course 5</div>
+                <div class="course-name">Forex & Futures</div>
+                <div class="course-meta">
+                    <span>14 modules</span>
+                    <span>~35 hours</span>
+                    <span>Intermediate</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="footer">
+            FinQT Trading Courses
+        </div>
+    </div>
+</body>
+</html>
