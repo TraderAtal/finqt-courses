@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Textarea Test</title>
+<style>
+body { background: #0a0a0a; color: #e0e0e0; font-family: sans-serif; padding: 20px; }
+h2 { color: #00c853; }
+
+/* Test 1: Plain textarea */
+.test1 textarea {
+    width: 100%;
+    min-height: 100px;
+    background: #141420;
+    color: #f8f8f2;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 14px;
+    font-family: monospace;
+    font-size: 16px;
+}
+
+/* Test 2: Same as our converter output */
+.code-cell {
+    position: relative;
+    background: #141420;
+    border: 1px solid #1e1e1e;
+    border-radius: 8px;
+    margin: 0.6em 0;
+}
+.cell-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid #1e1e1e;
+}
+.cell-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #00c853;
+    margin-right: auto;
+}
+.run-btn {
+    background: rgba(0, 200, 83, 0.1);
+    border: 1px solid #1b5e20;
+    border-radius: 4px;
+    color: #00c853;
+    font-size: 0.85rem;
+    padding: 8px 16px;
+    min-height: 44px;
+    cursor: pointer;
+    -webkit-appearance: none;
+}
+.code-editor {
+    display: block;
+    width: 100%;
+    min-height: 120px;
+    padding: 14px 16px;
+    background: #141420;
+    color: #f8f8f2;
+    border: none;
+    outline: none;
+    resize: vertical;
+    font-family: monospace;
+    font-size: 16px;
+    line-height: 1.55;
+    tab-size: 4;
+    white-space: pre;
+    overflow-x: auto;
+    -webkit-text-size-adjust: 100%;
+    position: relative;
+    z-index: 1;
+    touch-action: manipulation;
+    -webkit-user-select: text;
+    user-select: text;
+}
+.code-editor:focus {
+    box-shadow: inset 0 0 0 2px rgba(0, 200, 83, 0.3);
+}
+
+/* Test 3: contenteditable instead of textarea */
+.code-editable {
+    display: block;
+    width: 100%;
+    min-height: 120px;
+    padding: 14px 16px;
+    background: #141420;
+    color: #f8f8f2;
+    border: none;
+    outline: none;
+    font-family: monospace;
+    font-size: 16px;
+    line-height: 1.55;
+    white-space: pre;
+    overflow-x: auto;
+    -webkit-user-select: text;
+    user-select: text;
+}
+.code-editable:focus {
+    box-shadow: inset 0 0 0 2px rgba(0, 200, 83, 0.3);
+}
+</style>
+</head>
+<body>
+
+<h2>Test 1: Plain textarea (no wrapper)</h2>
+<textarea style="width:100%;min-height:80px;background:#141420;color:#f8f8f2;border:1px solid #333;padding:14px;font-family:monospace;font-size:16px;">Type here - plain textarea</textarea>
+
+<h2>Test 2: Textarea inside code-cell (same as converter)</h2>
+<div class="code-cell">
+    <div class="cell-toolbar">
+        <span class="cell-label">Exercise</span>
+        <button class="run-btn" type="button" id="test-run">Run</button>
+    </div>
+    <textarea class="code-editor" id="test-editor" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off">Type here - inside code-cell wrapper</textarea>
+</div>
+
+<h2>Test 3: contenteditable pre (alternative approach)</h2>
+<div class="code-cell">
+    <div class="cell-toolbar">
+        <span class="cell-label">Exercise</span>
+        <button class="run-btn" type="button">Run</button>
+    </div>
+    <pre class="code-editable" contenteditable="true" spellcheck="false">Type here - contenteditable pre</pre>
+</div>
+
+<h2>Test 4: Textarea with explicit inputmode</h2>
+<div class="code-cell">
+    <div class="cell-toolbar">
+        <span class="cell-label">Exercise</span>
+        <button class="run-btn" type="button">Run</button>
+    </div>
+    <textarea class="code-editor" inputmode="text" spellcheck="false">Type here - with inputmode=text</textarea>
+</div>
+
+<p id="status" style="color: #00c853; margin-top: 20px;"></p>
+
+<script>
+document.getElementById('test-run').addEventListener('click', function() {
+    document.getElementById('status').textContent = 'Button clicked! Value: ' + document.getElementById('test-editor').value;
+});
+
+// Log all touch events on textareas
+document.querySelectorAll('textarea, [contenteditable]').forEach(el => {
+    ['touchstart', 'touchend', 'focus', 'click'].forEach(evt => {
+        el.addEventListener(evt, function(e) {
+            console.log(evt + ' on ' + (el.id || el.className));
+            document.getElementById('status').textContent = evt + ' fired on ' + (el.id || el.className);
+        });
+    });
+});
+</script>
+</body>
+</html>
