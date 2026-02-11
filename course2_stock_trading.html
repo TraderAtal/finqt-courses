@@ -333,7 +333,7 @@ body {
     border: 1px solid var(--border);
     border-radius: 8px;
     margin: 0.6em 0;
-    overflow: hidden;
+    overflow: clip;
 }
 .code-cell pre {
     margin: 0;
@@ -429,12 +429,28 @@ body {
     -moz-tab-size: 4;
     white-space: pre;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
     -webkit-text-size-adjust: 100%;
+    /* iOS Safari touch fixes */
+    position: relative;
+    z-index: 1;
+    touch-action: manipulation;
+    -webkit-user-select: text;
+    user-select: text;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
 }
 
 .code-editor:focus {
     box-shadow: inset 0 0 0 2px rgba(0, 200, 83, 0.3);
+}
+
+/* iOS Safari: ensure textareas are always interactive */
+.code-cell textarea,
+.code-cell input {
+    -webkit-user-select: text !important;
+    user-select: text !important;
+    -webkit-touch-callout: default;
+    pointer-events: auto !important;
 }
 
 /* === Code Output === */
