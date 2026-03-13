@@ -5945,22 +5945,31 @@ function copyCode(btn) {
 }
 
 // ============================================================
-// Event Delegation — replaces all inline onclick handlers
+// Bind all buttons directly via addEventListener
 // ============================================================
-document.addEventListener('click', function(e) {
-    const btn = e.target.closest('[data-action]');
-    if (!btn) return;
-    const action = btn.dataset.action;
-    const cellId = btn.dataset.cell;
-    if (action === 'run' && cellId) { runCell(cellId); }
-    else if (action === 'runAbove' && cellId) { runAllAbove(cellId); }
-    else if (action === 'reset' && cellId) { resetCell(cellId); }
-    else if (action === 'copy') { copyCode(btn); }
-});
-
-// Hamburger & overlay
-document.querySelector('.hamburger').addEventListener('click', toggleSidebar);
-document.querySelector('.sidebar-overlay').addEventListener('click', closeSidebar);
+function bindButtons() {
+    document.querySelectorAll('[data-action]').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var action = btn.getAttribute('data-action');
+            var cellId = btn.getAttribute('data-cell');
+            if (action === 'run' && cellId) { runCell(cellId); }
+            else if (action === 'runAbove' && cellId) { runAllAbove(cellId); }
+            else if (action === 'reset' && cellId) { resetCell(cellId); }
+            else if (action === 'copy') { copyCode(btn); }
+        });
+    });
+    document.querySelector('.hamburger').addEventListener('click', function(e) {
+        e.preventDefault();
+        toggleSidebar();
+    });
+    document.querySelector('.sidebar-overlay').addEventListener('click', function(e) {
+        e.preventDefault();
+        closeSidebar();
+    });
+}
+bindButtons();
 
 // ============================================================
 // Pyodide Runtime
