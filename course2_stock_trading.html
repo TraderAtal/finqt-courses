@@ -477,6 +477,12 @@ body {
     color: #ff5252;
 }
 
+.code-output .warning {
+    color: #ffa726;
+    font-size: 0.85em;
+    opacity: 0.8;
+}
+
 .code-output .plot-image {
     max-width: 100%;
     height: auto;
@@ -17543,14 +17549,22 @@ async function runCell(cellId) {
         try {
             result = await pyodide.runPythonAsync(execSource, { globals: ns });
         } catch (pyErr) {
+            // Collect stderr traceback before resetting
+            var stderrTB = '';
+            try { stderrTB = await pyodide.runPythonAsync('sys.stderr.getvalue()', { globals: ns }); } catch(x) {}
             try { await pyodide.runPythonAsync('sys.stdout = sys.__stdout__; sys.stderr = sys.__stderr__', { globals: ns }); } catch(x) {}
-            var errMsg = pyErr.message || '';
-            if (!errMsg && pyErr.type) errMsg = pyErr.type + ': ' + (pyErr.info || '');
-            if (!errMsg) errMsg = String(pyErr);
-            // Try to get last meaningful line of traceback
-            var lines = errMsg.split('\n').filter(function(l) { return l.trim(); });
-            var shortErr = lines.length > 3 ? lines.slice(-3).join('\n') : errMsg;
-            outputDiv.innerHTML = '<span class="error">' + escapeHtml(shortErr) + '</span>';
+            // Extract error message from stderr traceback or pyErr
+            var errMsg = '';
+            var errType = pyErr.type || '';
+            var searchText = stderrTB || pyErr.message || String(pyErr);
+            var lines = searchText.split('\n');
+            for (var ei = lines.length - 1; ei >= 0; ei--) {
+                var tl = lines[ei].trim();
+                if (errType && tl.indexOf(errType + ':') === 0) { errMsg = tl; break; }
+                if (!errType && tl.match(/^[A-Z]\w*(Error|Exception):/)) { errMsg = tl; break; }
+            }
+            if (!errMsg) errMsg = errType || 'Error running code';
+            outputDiv.innerHTML = '<span class="error">' + escapeHtml(errMsg) + '</span>';
             return;
         }
 
@@ -17561,7 +17575,23 @@ async function runCell(cellId) {
 
         var outputHtml = '';
         if (stdout) outputHtml += escapeHtml(stdout);
-        if (stderr) outputHtml += '<span class="error">' + escapeHtml(stderr) + '</span>';
+        if (stderr) {
+            // Classify stderr: warnings/logging get muted style, real errors get red
+            var stderrLines = stderr.split('\n');
+            var warnLines = [];
+            var errLines = [];
+            for (var si = 0; si < stderrLines.length; si++) {
+                var sl = stderrLines[si];
+                if (!sl.trim()) continue;
+                if (sl.match(/Warning:|INFO:|WARNING:|DEBUG:|ERROR:|CRITICAL:|FutureWarning|DeprecationWarning|UserWarning| - INFO - | - WARNING - | - ERROR - | - DEBUG - | - CRITICAL - |\| INFO|\| WARNING|\| ERROR|\| DEBUG|\| CRITICAL/)) {
+                    warnLines.push(sl);
+                } else {
+                    errLines.push(sl);
+                }
+            }
+            if (warnLines.length) outputHtml += '<span class="warning">' + escapeHtml(warnLines.join('\n')) + '</span>';
+            if (errLines.length) outputHtml += '<span class="error">' + escapeHtml(errLines.join('\n')) + '</span>';
+        }
 
         if (hasPlot) {
             try {
