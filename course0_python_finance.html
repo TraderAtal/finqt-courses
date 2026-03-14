@@ -6019,7 +6019,12 @@ function getModuleIdx(cellId) {
 
 function getNamespace(moduleIdx) {
     if (!moduleNamespaces[moduleIdx]) {
-        moduleNamespaces[moduleIdx] = pyodide.globals.get('dict')();
+        var ns = pyodide.globals.get('dict')();
+        // Copy builtins and plot helper into module namespace
+        ns.set('__builtins__', pyodide.globals.get('__builtins__'));
+        var plotFn = pyodide.globals.get('_finqt_show_plot');
+        if (plotFn) ns.set('_finqt_show_plot', plotFn);
+        moduleNamespaces[moduleIdx] = ns;
     }
     return moduleNamespaces[moduleIdx];
 }
@@ -6068,6 +6073,9 @@ async function runCell(cellId) {
         // Redirect stdout/stderr
         await pyodide.runPythonAsync('import sys, io\nsys.stdout = io.StringIO()\nsys.stderr = io.StringIO()', { globals: ns });
 
+        // Strip Jupyter magic commands (%matplotlib inline, %%time, etc.)
+        source = source.split('\n').filter(function(line) { return !line.trim().match(/^%%?[a-zA-Z]/); }).join('\n');
+
         // Handle plt.show()
         var hasPlot = source.indexOf('plt.show()') !== -1;
         var execSource = hasPlot ? source.replace(/plt\.show\(\)/g, '_finqt_plot_data = _finqt_show_plot()') : source;
@@ -6077,7 +6085,13 @@ async function runCell(cellId) {
             result = await pyodide.runPythonAsync(execSource, { globals: ns });
         } catch (pyErr) {
             try { await pyodide.runPythonAsync('sys.stdout = sys.__stdout__; sys.stderr = sys.__stderr__', { globals: ns }); } catch(x) {}
-            outputDiv.innerHTML = '<span class="error">' + escapeHtml(pyErr.message) + '</span>';
+            var errMsg = pyErr.message || '';
+            if (!errMsg && pyErr.type) errMsg = pyErr.type + ': ' + (pyErr.info || '');
+            if (!errMsg) errMsg = String(pyErr);
+            // Try to get last meaningful line of traceback
+            var lines = errMsg.split('\n').filter(function(l) { return l.trim(); });
+            var shortErr = lines.length > 3 ? lines.slice(-3).join('\n') : errMsg;
+            outputDiv.innerHTML = '<span class="error">' + escapeHtml(shortErr) + '</span>';
             return;
         }
 
