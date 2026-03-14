@@ -17443,6 +17443,23 @@ async function initPyodide(cellId) {
         await pyodide.loadPackage(['numpy', 'pandas', 'scipy', 'matplotlib']);
         await pyodide.runPythonAsync(
             'import matplotlib\nmatplotlib.use("AGG")\nimport matplotlib.pyplot as plt\nimport io, base64\n' +
+            '# Dark theme for plots\n' +
+            'plt.rcParams.update({\n' +
+            '    "figure.facecolor": "#0c0c14",\n' +
+            '    "axes.facecolor": "#141420",\n' +
+            '    "axes.edgecolor": "#444",\n' +
+            '    "axes.labelcolor": "#e0e0e0",\n' +
+            '    "text.color": "#e0e0e0",\n' +
+            '    "xtick.color": "#b0b0b0",\n' +
+            '    "ytick.color": "#b0b0b0",\n' +
+            '    "grid.color": "#2a2a3a",\n' +
+            '    "grid.alpha": 0.5,\n' +
+            '    "legend.facecolor": "#1a1a2e",\n' +
+            '    "legend.edgecolor": "#444",\n' +
+            '    "legend.labelcolor": "#e0e0e0",\n' +
+            '    "axes.titlecolor": "#ffffff",\n' +
+            '    "figure.figsize": [10, 6],\n' +
+            '})\n' +
             'def _finqt_show_plot():\n buf = io.BytesIO()\n plt.savefig(buf, format="png", dpi=100, bbox_inches="tight", facecolor="#0c0c14", edgecolor="none")\n buf.seek(0)\n img_b64 = base64.b64encode(buf.read()).decode("utf-8")\n buf.close()\n plt.close("all")\n return img_b64\n'
         );
         pyodideReady = true;
