@@ -17336,6 +17336,20 @@ sections into a single automation pipeline:</p>
     </main>
 
     <script>
+        window.onerror = function(msg, url, line, col, err) {
+            var d = document.createElement('div');
+            d.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:red;color:white;padding:12px;font-size:14px;z-index:9999;font-family:monospace;white-space:pre-wrap;max-height:40vh;overflow:auto;';
+            d.textContent = 'JS ERROR: ' + msg + '\nLine: ' + line + ', Col: ' + col + '\n' + (err ? err.stack : '');
+            document.body.appendChild(d);
+        };
+        window.addEventListener('unhandledrejection', function(e) {
+            var d = document.createElement('div');
+            d.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:red;color:white;padding:12px;font-size:14px;z-index:9999;font-family:monospace;white-space:pre-wrap;max-height:40vh;overflow:auto;';
+            d.textContent = 'PROMISE ERROR: ' + (e.reason ? (e.reason.message || String(e.reason)) : 'unknown');
+            document.body.appendChild(d);
+        });
+    </script>
+    <script>
         window.courseId = 'course2_stock_trading';
         
 // State
