@@ -3,156 +3,97 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Textarea Test</title>
+<title>iOS Debug Test</title>
 <style>
 body { background: #0a0a0a; color: #e0e0e0; font-family: sans-serif; padding: 20px; }
-h2 { color: #00c853; }
-
-/* Test 1: Plain textarea */
-.test1 textarea {
-    width: 100%;
-    min-height: 100px;
-    background: #141420;
-    color: #f8f8f2;
-    border: 1px solid #333;
-    border-radius: 8px;
-    padding: 14px;
-    font-family: monospace;
-    font-size: 16px;
-}
-
-/* Test 2: Same as our converter output */
-.code-cell {
-    position: relative;
-    background: #141420;
-    border: 1px solid #1e1e1e;
-    border-radius: 8px;
-    margin: 0.6em 0;
-}
-.cell-toolbar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 10px;
-    background: rgba(255,255,255,0.03);
-    border-bottom: 1px solid #1e1e1e;
-}
-.cell-label {
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: #00c853;
-    margin-right: auto;
-}
-.run-btn {
-    background: rgba(0, 200, 83, 0.1);
+h2 { color: #00c853; font-size: 1.1rem; margin-top: 1.5em; }
+.log { color: #00c853; margin: 10px 0; padding: 10px; background: #141420; border-radius: 6px; font-family: monospace; font-size: 14px; white-space: pre-wrap; min-height: 40px; }
+button {
+    background: rgba(0, 200, 83, 0.15);
     border: 1px solid #1b5e20;
-    border-radius: 4px;
+    border-radius: 6px;
     color: #00c853;
-    font-size: 0.85rem;
-    padding: 8px 16px;
-    min-height: 44px;
+    font-size: 16px;
+    padding: 12px 24px;
+    margin: 6px 4px;
     cursor: pointer;
     -webkit-appearance: none;
-}
-.code-editor {
-    display: block;
-    width: 100%;
-    min-height: 120px;
-    padding: 14px 16px;
-    background: #141420;
-    color: #f8f8f2;
-    border: none;
-    outline: none;
-    resize: vertical;
-    font-family: monospace;
-    font-size: 16px;
-    line-height: 1.55;
-    tab-size: 4;
-    white-space: pre;
-    overflow-x: auto;
-    -webkit-text-size-adjust: 100%;
-    position: relative;
-    z-index: 1;
-    touch-action: manipulation;
-    -webkit-user-select: text;
-    user-select: text;
-}
-.code-editor:focus {
-    box-shadow: inset 0 0 0 2px rgba(0, 200, 83, 0.3);
-}
-
-/* Test 3: contenteditable instead of textarea */
-.code-editable {
-    display: block;
-    width: 100%;
-    min-height: 120px;
-    padding: 14px 16px;
-    background: #141420;
-    color: #f8f8f2;
-    border: none;
-    outline: none;
-    font-family: monospace;
-    font-size: 16px;
-    line-height: 1.55;
-    white-space: pre;
-    overflow-x: auto;
-    -webkit-user-select: text;
-    user-select: text;
-}
-.code-editable:focus {
-    box-shadow: inset 0 0 0 2px rgba(0, 200, 83, 0.3);
+    -webkit-tap-highlight-color: rgba(0, 200, 83, 0.3);
+    min-height: 44px;
 }
 </style>
 </head>
 <body>
 
-<h2>Test 1: Plain textarea (no wrapper)</h2>
-<textarea style="width:100%;min-height:80px;background:#141420;color:#f8f8f2;border:1px solid #333;padding:14px;font-family:monospace;font-size:16px;">Type here - plain textarea</textarea>
+<h2>iOS Safari Run Button Debug</h2>
+<p>Tap each button and report what you see in the green log boxes.</p>
 
-<h2>Test 2: Textarea inside code-cell (same as converter)</h2>
-<div class="code-cell">
-    <div class="cell-toolbar">
-        <span class="cell-label">Exercise</span>
-        <button class="run-btn" type="button" id="test-run">Run</button>
-    </div>
-    <textarea class="code-editor" id="test-editor" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off">Type here - inside code-cell wrapper</textarea>
-</div>
+<h2>Test 1: Sync onclick</h2>
+<button onclick="document.getElementById('log1').textContent = 'CLICKED at ' + new Date().toLocaleTimeString()">Sync Click</button>
+<div class="log" id="log1">waiting...</div>
 
-<h2>Test 3: contenteditable pre (alternative approach)</h2>
-<div class="code-cell">
-    <div class="cell-toolbar">
-        <span class="cell-label">Exercise</span>
-        <button class="run-btn" type="button">Run</button>
-    </div>
-    <pre class="code-editable" contenteditable="true" spellcheck="false">Type here - contenteditable pre</pre>
-</div>
-
-<h2>Test 4: Textarea with explicit inputmode</h2>
-<div class="code-cell">
-    <div class="cell-toolbar">
-        <span class="cell-label">Exercise</span>
-        <button class="run-btn" type="button">Run</button>
-    </div>
-    <textarea class="code-editor" inputmode="text" spellcheck="false">Type here - with inputmode=text</textarea>
-</div>
-
-<p id="status" style="color: #00c853; margin-top: 20px;"></p>
-
+<h2>Test 2: Async onclick</h2>
+<button onclick="asyncTest()">Async Click</button>
+<div class="log" id="log2">waiting...</div>
 <script>
-document.getElementById('test-run').addEventListener('click', function() {
-    document.getElementById('status').textContent = 'Button clicked! Value: ' + document.getElementById('test-editor').value;
-});
-
-// Log all touch events on textareas
-document.querySelectorAll('textarea, [contenteditable]').forEach(el => {
-    ['touchstart', 'touchend', 'focus', 'click'].forEach(evt => {
-        el.addEventListener(evt, function(e) {
-            console.log(evt + ' on ' + (el.id || el.className));
-            document.getElementById('status').textContent = evt + ' fired on ' + (el.id || el.className);
-        });
-    });
-});
+async function asyncTest() {
+    document.getElementById('log2').textContent = 'Step 1: handler fired';
+    await new Promise(function(r) { setTimeout(r, 500); });
+    document.getElementById('log2').textContent += '\nStep 2: after await';
+}
 </script>
+
+<h2>Test 3: Async onclick + fetch script</h2>
+<button onclick="fetchTest()">Fetch Script</button>
+<div class="log" id="log3">waiting...</div>
+<script>
+async function fetchTest() {
+    var log = document.getElementById('log3');
+    log.textContent = 'Step 1: handler fired';
+    try {
+        log.textContent += '\nStep 2: fetching script...';
+        var resp = await fetch('https://cdn.jsdelivr.net/pyodide/v0.27.5/full/pyodide.js', {method: 'HEAD'});
+        log.textContent += '\nStep 3: fetch status = ' + resp.status;
+    } catch(e) {
+        log.textContent += '\nERROR: ' + e.message;
+    }
+}
+</script>
+
+<h2>Test 4: Async onclick + load Pyodide</h2>
+<button onclick="pyodideTest()">Load Pyodide</button>
+<div class="log" id="log4">waiting...</div>
+<script>
+async function pyodideTest() {
+    var log = document.getElementById('log4');
+    log.textContent = 'Step 1: handler fired';
+    try {
+        log.textContent += '\nStep 2: loading pyodide.js...';
+        if (!window.loadPyodide) {
+            await new Promise(function(resolve, reject) {
+                var s = document.createElement('script');
+                s.src = 'https://cdn.jsdelivr.net/pyodide/v0.27.5/full/pyodide.js';
+                s.onload = function() { log.textContent += '\nStep 3: script loaded'; resolve(); };
+                s.onerror = function() { reject(new Error('script failed')); };
+                document.head.appendChild(s);
+            });
+        } else {
+            log.textContent += '\nStep 3: already loaded';
+        }
+        log.textContent += '\nStep 4: calling loadPyodide...';
+        var py = await loadPyodide({indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.27.5/full/'});
+        log.textContent += '\nStep 5: pyodide ready!';
+        var result = await py.runPythonAsync('2 + 2');
+        log.textContent += '\nStep 6: 2+2 = ' + result;
+    } catch(e) {
+        log.textContent += '\nERROR: ' + String(e);
+    }
+}
+</script>
+
+<h2>Test 5: Inline style change (proves onclick fires)</h2>
+<button onclick="this.style.background='red';this.textContent='FIRED';document.getElementById('log5').textContent='Button onclick fired!'">Visual Click</button>
+<div class="log" id="log5">waiting...</div>
+
 </body>
 </html>
