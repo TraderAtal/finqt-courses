@@ -89,6 +89,66 @@ body {
     margin-left: auto;
 }
 
+/* === Google Translate Widget === */
+#google_translate_element {
+    flex-shrink: 0;
+}
+#google_translate_element select {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-dim);
+    font-family: inherit;
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+}
+#google_translate_element select:hover {
+    border-color: var(--green);
+    color: var(--green);
+}
+/* Hide Google Translate top banner */
+.goog-te-banner-frame {
+    display: none !important;
+}
+body { top: 0 !important; }
+/* Style the translate widget to match dark theme */
+#google_translate_element .goog-te-gadget {
+    color: transparent !important;
+    font-size: 0 !important;
+}
+#google_translate_element .goog-te-gadget-simple {
+    background: rgba(255,255,255,0.06) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 4px !important;
+    padding: 2px 8px !important;
+    cursor: pointer !important;
+}
+#google_translate_element .goog-te-gadget-simple:hover {
+    border-color: var(--green) !important;
+}
+#google_translate_element .goog-te-gadget-simple span {
+    color: var(--text-dim) !important;
+    font-size: 0.75rem !important;
+    display: inline !important;
+}
+#google_translate_element .goog-te-gadget-simple span[aria-hidden] {
+    color: var(--text-dim) !important;
+}
+#google_translate_element .goog-te-gadget-icon {
+    display: none !important;
+}
+#google_translate_element .goog-te-gadget-simple span[style*="border-left"] {
+    display: none !important;
+}
+/* Keep code cells untranslated */
+.code-cell, .code-editor, pre, code {
+    translate: no;
+}
+
 /* === Sidebar === */
 .sidebar-overlay {
     position: fixed;
@@ -770,6 +830,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
         <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
         <span class="header-title">Stock Algo Trading</span>
         <span class="header-module"></span>
+        <div id="google_translate_element"></div>
     </div>
 
     <!-- Sidebar Overlay -->
@@ -17418,6 +17479,13 @@ function escapeHtml(text) {
     return d.innerHTML;
 }
 
+function b64DecodeUtf8(b64) {
+    var binary = atob(b64);
+    var bytes = new Uint8Array(binary.length);
+    for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return new TextDecoder('utf-8').decode(bytes);
+}
+
 function showOutput(cellId, html) {
     var el = document.getElementById('output-' + cellId);
     if (el) { el.innerHTML = html; el.classList.add('visible'); }
@@ -17514,7 +17582,7 @@ async function runCell(cellId) {
         if (editor) {
             source = editor.value;
         } else if (cellDiv.dataset && cellDiv.dataset.source) {
-            source = atob(cellDiv.dataset.source);
+            source = b64DecodeUtf8(cellDiv.dataset.source);
         } else {
             outputDiv.innerHTML = '<span class="error">No source code found</span>';
             return;
@@ -17623,7 +17691,7 @@ function resetCell(cellId) {
     var editor = cellDiv.querySelector('.code-editor');
     var outputDiv = document.getElementById('output-' + cellId);
     if (editor && cellDiv.dataset.originalSource) {
-        editor.value = atob(cellDiv.dataset.originalSource);
+        editor.value = b64DecodeUtf8(cellDiv.dataset.originalSource);
     }
     if (outputDiv) {
         outputDiv.innerHTML = '';
@@ -17679,5 +17747,20 @@ document.addEventListener('keydown', (e) => {
 });
 
     </script>
+    <script>
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+            pageLanguage: 'en',
+            includedLanguages: 'en,es,fr,de,ja,ko,zh-CN,zh-TW,ar,pt,ru,tr,hi,it,nl',
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+            autoDisplay: false
+        }, 'google_translate_element');
+        // Mark code elements as notranslate
+        document.querySelectorAll('.code-cell, pre, code, .code-editor').forEach(function(el) {
+            el.classList.add('notranslate');
+        });
+    }
+    </script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
