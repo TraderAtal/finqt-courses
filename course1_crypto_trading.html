@@ -93,28 +93,20 @@ body {
 #google_translate_element {
     flex-shrink: 0;
 }
-#google_translate_element select {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    color: var(--text-dim);
-    font-family: inherit;
-    font-size: 0.75rem;
-    padding: 4px 8px;
-    cursor: pointer;
-    -webkit-appearance: none;
-    appearance: none;
-    outline: none;
-}
-#google_translate_element select:hover {
-    border-color: var(--green);
-    color: var(--green);
-}
-/* Hide Google Translate top banner */
-.goog-te-banner-frame {
+/* Hide Google Translate top banner and prevent body shift */
+.goog-te-banner-frame, .goog-te-balloon-frame {
     display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
 }
-body { top: 0 !important; }
+body {
+    top: 0 !important;
+    position: static !important;
+}
+.skiptranslate > iframe {
+    display: none !important;
+    height: 0 !important;
+}
 /* Style the translate widget to match dark theme */
 #google_translate_element .goog-te-gadget {
     color: transparent !important;
@@ -135,18 +127,11 @@ body { top: 0 !important; }
     font-size: 0.75rem !important;
     display: inline !important;
 }
-#google_translate_element .goog-te-gadget-simple span[aria-hidden] {
-    color: var(--text-dim) !important;
-}
 #google_translate_element .goog-te-gadget-icon {
     display: none !important;
 }
 #google_translate_element .goog-te-gadget-simple span[style*="border-left"] {
     display: none !important;
-}
-/* Keep code cells untranslated */
-.code-cell, .code-editor, pre, code {
-    translate: no;
 }
 
 /* === Sidebar === */
@@ -12133,16 +12118,16 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeSidebar();
 });
 
+
     </script>
     <script>
     function googleTranslateElementInit() {
         new google.translate.TranslateElement({
             pageLanguage: 'en',
-            includedLanguages: 'en,es,fr,de,ja,ko,zh-CN,zh-TW,ar,pt,ru,tr,hi,it,nl',
+            includedLanguages: 'en,es,de,tr',
             layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
             autoDisplay: false
         }, 'google_translate_element');
-        // Mark code elements as notranslate
         document.querySelectorAll('.code-cell, pre, code, .code-editor').forEach(function(el) {
             el.classList.add('notranslate');
         });
